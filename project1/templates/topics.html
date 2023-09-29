@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Topics
+{% endblock %}
+
+{% block content %}
+<div class="topics-page">
+    <div class="sidebar">
+        <ul>
+            {% for level in levels %}
+            <li>
+                <h5>{{ level }}</h5>
+                <ul>
+                    {% for topic in topics %}
+                    {% if topic.level == level %}
+                    <li>
+                        <a href="#" class="topic-link" data-topic-id="{{ topic.topic_id }}">{{ topic.Title }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="content-container">
+        {% for topic in topics %}
+        <div class="topic-content-container" data-topic-id="{{ topic.topic_id }}">
+            <div class="content-wrapper">
+                <h3>{{ topic.Title }}</h3><br>
+                <div class="topic-content">{{ topic.topic_content|safe }}</div>
+            </div>
+        </div>
+        {% endfor %}
+        <button class="next-button">Next</button>
+    </div>
+</div>
+
+<style>
+    .topic-content {
+        white-space: pre-line;
+    }
+</style>
+
+<script>
+    const sidebarLevels = document.querySelectorAll('.sidebar > ul > li');
+    const topicContainers = document.querySelectorAll('.topic-content-container');
+    const nextButton = document.querySelector('.next-button');
+
+    const sortedContainers = [];
+
+    // Iterate through sidebar levels and organize topic containers
+    sidebarLevels.forEach(level => {
+        const levelName = level.textContent.trim();
+        const levelContainers = [];
+
+        level.querySelectorAll('ul > li > a').forEach(topicLink => {
+            const topicId = topicLink.getAttribute('data-topic-id');
+            const topicContainer = document.querySelector(`.topic-content-container[data-topic-id="${topicId}"]`);
+            levelContainers.push(topicContainer);
+        });
+
+        sortedContainers.push(...levelContainers);
+    });
+
+    let currentIndex = 0;
+
+    topicContainers.forEach(container => {
+        container.style.display = 'none';
+    });
+
+    // Show the first topic container initially
+    sortedContainers[currentIndex].style.display = 'block';
+
+    nextButton.addEventListener('click', function () {
+        topicContainers.forEach(container => {
+            container.style.display = 'none';
+        });
+
+        currentIndex = (currentIndex + 1) % sortedContainers.length;
+        sortedContainers[currentIndex].style.display = 'block';
+
+        // Scroll to the top of the next topic's title
+        const nextTopicTitle = sortedContainers[currentIndex].querySelector('h3');
+        if (nextTopicTitle) {
+            nextTopicTitle.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    // Show the clicked topic container
+    function showTopicContainer(index) {
+        topicContainers.forEach(container => {
+            container.style.display = 'none';
+        });
+
+        currentIndex = index;
+        sortedContainers[currentIndex].style.display = 'block';
+    }
+
+    const topicLinks = document.querySelectorAll('.topic-link');
+    topicLinks.forEach((link, index) => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            const clickedTopicId = link.getAttribute('data-topic-id');
+            const clickedIndex = Array.from(sortedContainers).findIndex(container => container.getAttribute('data-topic-id') === clickedTopicId);
+            showTopicContainer(clickedIndex);
+        });
+    });
+</script>
+
+{% endblock %}

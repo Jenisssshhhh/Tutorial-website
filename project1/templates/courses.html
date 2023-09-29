@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title%}
+Courses
+{%endblock%}
+{% block content%}
+
+
+<!-- Categories Start -->
+<div class="container-xxl py-5 category">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Categories</h6>
+            <h1 class="mb-5">Courses Categories</h1>
+        </div>
+
+        <div class="row g-3">
+            {% for category in categories %}
+            <div class="col-lg-4 col-md-6 col-sm-12 wow zoomIn" data-wow-delay="0.{{ forloop.counter }}s">
+                <a class="position-relative d-block overflow-hidden" href="{% url 'category' category.id %}">
+                    <div class="card">
+                        <img class="card-img-top img-fluid" src="{{ category.image_path.url }}" alt="">
+                        <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3"
+                            style="margin: 1px;">
+                            <h5 class="m-0">{{ category.category }}</h5>
+                            <small class="text-primary">{{ category.course_set.count }} Courses</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% if forloop.counter|divisibleby:3 %}
+        </div>
+        <div class="row g-3">
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Categories End -->
+
+<style>
+    .card {
+        height: 300px;
+        /* Adjust the card height as needed */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+    }
+
+    .card-img-top {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+
+<!-- Courses Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="section-title bg-white text-center text-primary px-3">Courses</h1>
+        </div>
+        <div class="row g-4 justify-content-center">
+            {% for course in courses %}
+            <div class="col-lg-3 col-md-4 col-sm-6 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s">
+                <div class="course-item bg-light">
+                    <div class="position-relative overflow-hidden">
+                        <img class="img-fluid" src="{{ course.course_photo.url }}" alt="">
+                        <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-2">
+                            <a href="{% url 'topics' course.course_id %}"
+                                class="flex-shrink-0 btn btn-sm btn-primary px-2 border-end read-more-btn"
+                                style="border-radius: 15px 0 0 15px;">Read More</a>
+                            <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-2 join-now-btn"
+                                style="border-radius: 0 15px 15px 0;">Join
+                                Now</a>
+                        </div>
+                    </div>
+                    <div class="text-center p-3">
+                        <h3 class="mb-0">{{ course.price }}</h3>
+                        <h5 class="mb-2">{{ course.Title }}</h5>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Courses End -->
+
+<style>
+    .read-more-btn,
+    .join-now-btn {
+        display: none;
+    }
+
+    .course-item:hover .read-more-btn,
+    .course-item:hover .join-now-btn {
+        display: block;
+    }
+</style>
+
+
+{%endblock content%}
